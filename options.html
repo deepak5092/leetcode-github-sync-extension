@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>LeetCode to GitHub Sync</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; width: 300px; padding: 14px; }
+    label { display: block; margin-bottom: 10px; font-size: 13px; }
+    input { width: 100%; box-sizing: border-box; padding: 6px; margin-top: 4px; }
+    button { width: 100%; padding: 8px; margin-top: 4px; }
+    #status { margin-top: 8px; font-size: 12px; color: green; min-height: 14px; }
+  </style>
+</head>
+<body>
+  <h3 style="margin-top:0">GitHub Sync Settings</h3>
+  <label>GitHub username/org
+    <input id="owner" placeholder="e.g. deepakjotsingh" />
+  </label>
+  <label>Repo name
+    <input id="repo" placeholder="e.g. leetcode-solutions" />
+  </label>
+  <label>Personal access token
+    <input id="token" type="password" placeholder="fine-grained PAT, repo-scoped" />
+  </label>
+  <button id="save">Save</button>
+  <div id="status"></div>
+  <script src="options.js"></script>
+</body>
+</html>
