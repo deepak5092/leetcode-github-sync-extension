@@ -17,13 +17,18 @@ const EXTENSIONS = {
   php: "php",
 };
 
+const LOG_PREFIX = "[LC-GitHub-Sync]";
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type !== "PUSH_SOLUTION") return;
 
   pushToGitHub(message.payload)
-    .then(() => sendResponse({ ok: true }))
+    .then(() => {
+      console.log(`${LOG_PREFIX} GitHub push succeeded for "${message.payload.title}"`);
+      sendResponse({ ok: true });
+    })
     .catch((err) => {
-      console.error("LeetCode -> GitHub sync failed:", err);
+      console.error(`${LOG_PREFIX} GitHub push failed for "${message.payload.title}":`, err);
       sendResponse({ ok: false, error: String(err) });
     });
 
@@ -42,19 +47,18 @@ async function pushToGitHub({ title, titleSlug, difficulty, lang, code }) {
   }
 
   const ext = EXTENSIONS[lang.toLowerCase()] || "txt";
-  const path = `${difficulty}/${titleSlug}/solution.${ext}`;
-  const apiUrl = `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${path}`;
+  const folder = `${difficulty}/${titleSlug}`;
   const headers = {
     Authorization: `Bearer ${githubToken}`,
     Accept: "application/vnd.github+json",
   };
 
-  // If the file already exists, GitHub requires its current sha to update it.
-  let sha;
-  const existing = await fetch(apiUrl, { headers });
-  if (existing.status === 200) {
-    sha = (await existing.json()).sha;
-  }
+  // Every accepted submission — including the first — gets its own
+  // timestamped file, so nothing is ever overwritten and no lookup is
+  // needed to tell whether this problem was solved before.
+  const filename = `solution-${formatTimestamp(new Date())}.${ext}`;
+  const path = `${folder}/${filename}`;
+  const apiUrl = `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${path}`;
 
   const res = await fetch(apiUrl, {
     method: "PUT",
@@ -62,13 +66,17 @@ async function pushToGitHub({ title, titleSlug, difficulty, lang, code }) {
     body: JSON.stringify({
       message: `Add solution: ${title}`,
       content: base64EncodeUtf8(code),
-      ...(sha ? { sha } : {}),
     }),
   });
 
   if (!res.ok) {
     throw new Error(`GitHub push failed: ${res.status} ${await res.text()}`);
   }
+}
+
+function formatTimestamp(date) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}_${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`;
 }
 
 function base64EncodeUtf8(str) {
