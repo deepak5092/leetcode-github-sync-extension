@@ -1,12 +1,12 @@
 // Runs in the page's own JS context (world: MAIN), so it can see the
-// fetch() calls LeetCode's own React app makes — including the polling
+// fetch() calls LeetCode's own React app makes, including the polling
 // request it uses to check whether your submission was Accepted.
 (function () {
   const LOG_PREFIX = "[LC-GitHub-Sync]";
   const processed = new Set();
   const originalFetch = window.fetch;
 
-  // LeetCode's check endpoint is "/submissions/detail/{id}/v2/check/" — the
+  // LeetCode's check endpoint is "/submissions/detail/{id}/v2/check/". The
   // (?:\w+\/)* allows for that (or any future) version segment while still
   // matching the older unversioned "/check/" shape too.
   const CHECK_URL_RE = /\/submissions\/detail\/(\d+)\/(?:\w+\/)*check(?:\/|\?|#|$)/;

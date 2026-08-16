@@ -53,7 +53,7 @@ async function pushToGitHub({ title, titleSlug, difficulty, lang, code }) {
     Accept: "application/vnd.github+json",
   };
 
-  // Every accepted submission — including the first — gets its own
+  // Every accepted submission, including the first, gets its own
   // timestamped file, so nothing is ever overwritten and no lookup is
   // needed to tell whether this problem was solved before.
   const filename = `solution-${formatTimestamp(new Date())}.${ext}`;

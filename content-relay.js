@@ -33,7 +33,7 @@ async function fetchSubmissionDetails(submissionId) {
   // is rejected.
   const csrftoken = getCookie("csrftoken");
   if (!csrftoken) {
-    console.error(`${LOG_PREFIX} no csrftoken cookie found — are you logged into LeetCode in this browser profile?`);
+    console.error(`${LOG_PREFIX} no csrftoken cookie found, are you logged into LeetCode in this browser profile?`);
     return;
   }
 
